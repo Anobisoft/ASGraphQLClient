@@ -30,7 +30,7 @@ static NSMutableDictionary *instancesCache;
     BOOL isDirectory;
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDirectory];
     if (filePath && fileExists && !isDirectory) {
-        instance == [[self alloc] initWithFilePath:(NSString *)filePath];
+        instance = [[self alloc] initWithFilePath:(NSString *)filePath];
         instancesCache[qname] = instance;
         return instance;
     } else {
