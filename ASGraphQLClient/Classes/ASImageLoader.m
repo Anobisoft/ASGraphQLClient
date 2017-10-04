@@ -54,30 +54,83 @@ static UIImage *placeholder;
 static NSMutableSet *failedURLs;
 static NSCache *cache;
 
-static NSUInteger cacheMemoryCapacity;
-static NSUInteger cacheDiskCapacity;
-static NSTimeInterval requestTimeout;
+#pragma mark -
 
-+ (void)initialize {
-    [super initialize];
-    @try {
-        NSDictionary *config = [AKConfig<NSDictionary *> configWithName:self.class.description];
-        if (config) {
-            requestTimeout = ((NSNumber *)config[@"requestTimeout"]).doubleValue ?: ASImageLoaderDefaults_requestTimeout;
-            cacheMemoryCapacity = ((NSNumber *)config[@"cacheMemoryCapacity"]).unsignedIntegerValue;
-            if (cacheMemoryCapacity <= 0) cacheMemoryCapacity = ASImageLoaderDefaults_cacheMemoryCapacity;
-            cacheDiskCapacity = ((NSNumber *)config[@"cacheDiskCapacity"]).unsignedIntegerValue;
-            if (cacheDiskCapacity <= 0) cacheDiskCapacity = ASImageLoaderDefaults_cacheDiskCapacity;
-        }
-    } @catch (NSException *exception) {
-        NSLog(@"[ERROR] Exception: %@", exception);
+static NSUInteger _cacheMemoryCapacity;
++ (NSUInteger)cacheMemoryCapacity {
+    return _cacheMemoryCapacity;
+}
++ (void)setCacheMemoryCapacity:(NSUInteger)cacheMemoryCapacity {
+    if (cacheMemoryCapacity != _cacheMemoryCapacity) {
+        _cacheMemoryCapacity = cacheMemoryCapacity;
+        [self configureCache];
     }
 }
 
-+ (void)configureWithRequestTimeout:(NSTimeInterval)t cacheMemoryCapacity:(NSUInteger)cacheMemoryCap cacheDiskCapacity:(NSUInteger)cacheDiskCap  {
-
+static NSUInteger _cacheDiskCapacity;
++ (NSUInteger)cacheDiskCapacity {
+    return _cacheDiskCapacity;
+}
++ (void)setCacheDiskCapacity:(NSUInteger)cacheDiskCapacity {
+    if (cacheDiskCapacity != _cacheDiskCapacity) {
+        _cacheDiskCapacity = cacheDiskCapacity;
+        [self configureCache];
+    }
 }
 
++ (void)configureCache  {
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:self.cacheMemoryCapacity diskCapacity:self.cacheDiskCapacity diskPath:nil];
+    [NSURLCache setSharedURLCache:sharedCache];
+}
+
+static NSUInteger _requestTimeout;
++ (NSTimeInterval)requestTimeout {
+    return _requestTimeout;
+}
++ (void)setRequestTimeout:(NSTimeInterval)requestTimeout {
+    if (requestTimeout > 0) _requestTimeout = requestTimeout;
+}
+
+
+#pragma mark -
+
++ (void)initialize {
+    [super initialize];
+    self.requestTimeout = ASImageLoaderDefaults_requestTimeout;
+    _cacheMemoryCapacity = ASImageLoaderDefaults_cacheMemoryCapacity;
+    _cacheDiskCapacity = ASImageLoaderDefaults_cacheDiskCapacity;
+    
+    @try {
+        NSDictionary *config = [AKConfig<NSDictionary *> configWithName:self.class.description];
+        if (config) {
+            NSNumber *timeoutNumber = config[@"requestTimeout"];
+            if (timeoutNumber) {
+                NSTimeInterval timepout = timeoutNumber.doubleValue;
+                if (timepout > 0) {
+                    self.requestTimeout = timepout;
+                }
+            }
+            
+            NSNumber *cacheMemoryCapacityNumber = config[@"cacheMemoryCapacity"];
+            if (cacheMemoryCapacityNumber) {
+                NSUInteger cacheMemoryCapacity = cacheMemoryCapacityNumber.unsignedIntegerValue;
+                _cacheMemoryCapacity = cacheMemoryCapacity;
+            }
+            NSNumber *cacheDiskCapacityNumber = config[@"cacheDiskCapacity"];
+            if (cacheDiskCapacityNumber) {
+                NSUInteger cacheDiskCapacity = cacheDiskCapacityNumber.unsignedIntegerValue;
+                _cacheDiskCapacity = cacheDiskCapacity;
+            }
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[ERROR] Exception: %@", exception);
+    } @finally {
+        [self configureCache];
+    }
+}
+
+
+#pragma mark -
 
 + (UIImage *)imageFetch:(void (^)(UIImage *image, NSError *error))fetch withURL:(NSURL *)URL {
     if (!URL || [failedURLs containsObject:URL]) {
@@ -89,7 +142,7 @@ static NSTimeInterval requestTimeout;
         return cachedImage;
     }
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:requestTimeout];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:self.requestTimeout];
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     if (cachedResponse) {
         NSData *data = cachedResponse.data;

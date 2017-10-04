@@ -12,6 +12,10 @@
 
 @interface ASImageLoader : NSObject <Abstract>
 
+@property (class) NSTimeInterval requestTimeout;
+@property (class) NSUInteger cacheMemoryCapacity;
+@property (class) NSUInteger cacheDiskCapacity;
+
 + (UIImage *)imageFetch:(void (^)(UIImage *image, NSError *error))fetch withURL:(NSURL *)URL;
 
 + (void)imageFetchWithURL:(NSURL *)URL
