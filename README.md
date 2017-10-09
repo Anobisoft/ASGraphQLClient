@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/ASGraphQLClient.svg?style=flat)](http://cocoapods.org/pods/ASGraphQLClient)
 [![Twitter](https://img.shields.io/badge/twitter-@Anobisoft-blue.svg?style=flat)](http://twitter.com/Anobisoft)
 
-Collection of various independent classes and categories useful to Objective-C iOS Developer.
+GraphQL Client
 
 ## Example
 
