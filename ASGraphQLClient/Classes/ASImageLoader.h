@@ -15,9 +15,9 @@
 @property (class) NSTimeInterval requestTimeout;
 @property (class) NSUInteger cacheMemoryCapacity;
 @property (class) NSUInteger cacheDiskCapacity;
+@property (class) NSString *placeholderImageName;
 
 + (UIImage *)imageFetch:(void (^)(UIImage *image, NSError *error))fetch withURL:(NSURL *)URL;
-
 + (void)imageFetchWithURL:(NSURL *)URL
                   forCell:(id<ASImagePresenter>)cell
                    inView:(__weak UIView *)view // UITableView or UICollectionView

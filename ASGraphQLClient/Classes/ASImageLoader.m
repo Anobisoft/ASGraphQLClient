@@ -48,13 +48,28 @@
 #pragma mark - ASImageLoader
 #pragma mark -
 
+@interface ASImageLoader()
+@property (class, readonly) id placeholder;
+@end
+
 @implementation ASImageLoader
 
-static UIImage *placeholder;
+static NSString *_placeholderImageName;
 static NSMutableSet *failedURLs;
 static NSCache *cache;
 
 #pragma mark -
+
++ (id)placeholder {
+    return self.placeholderImageName ? [UIImage imageNamed:self.placeholderImageName] : [NSNull null];
+}
++ (NSString *)placeholderImageName {
+    return _placeholderImageName;
+}
++ (void)setPlaceholderImageName:(NSString *)placeholderImageName {
+    _placeholderImageName = placeholderImageName;
+}
+
 
 static NSUInteger _cacheMemoryCapacity;
 + (NSUInteger)cacheMemoryCapacity {
@@ -134,7 +149,7 @@ static NSUInteger _requestTimeout;
 
 + (UIImage *)imageFetch:(void (^)(UIImage *image, NSError *error))fetch withURL:(NSURL *)URL {
     if (!URL || [failedURLs containsObject:URL]) {
-        return placeholder;
+        return self.placeholder;
     }
     
     UIImage *cachedImage = [cache objectForKey:URL];
@@ -163,7 +178,7 @@ static NSUInteger _requestTimeout;
             }
         }
         if (fetch) {
-            UIImage *image = placeholder;
+            UIImage *image = self.placeholder;
             if (data) {
                 image = [UIImage imageWithData:data];
                 [cache setObject:image forKey:URL];
@@ -203,7 +218,12 @@ static NSUInteger _requestTimeout;
     } else {
         [cell.activityIndicator startAnimating];
     }
-    [cell setImage:cachedImage];
+    if ([cachedImage isKindOfClass:[NSNull class]]) {
+        [cell setImage:nil];
+    } else {
+        [cell setImage:cachedImage];
+    }
+    
 }
 
 @end
