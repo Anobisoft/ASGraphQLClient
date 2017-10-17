@@ -214,15 +214,18 @@ static NSUInteger _requestTimeout;
         });
     } withURL:URL];
     if (cachedImage) {
-        [cell.activityIndicator stopAnimating];        
+        [cell.activityIndicator stopAnimating];
+        if ([cachedImage isKindOfClass:[UIImage class]]) {
+            [cell setImage:cachedImage];
+        } else {
+            [cell setImage:nil];
+        }
     } else {
         [cell.activityIndicator startAnimating];
+        [cell setImage:self.placeholder];
     }
-    if ([cachedImage isKindOfClass:[NSNull class]]) {
-        [cell setImage:nil];
-    } else {
-        [cell setImage:cachedImage];
-    }
+    
+
     
 }
 
