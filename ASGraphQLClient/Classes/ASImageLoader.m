@@ -196,6 +196,10 @@ static NSUInteger _requestTimeout;
 }
 
 
++ (BOOL)imagePresenterHasActivityIndicator:(id<ASImagePresenter>)imagePresenter {
+    return [imagePresenter respondsToSelector:@selector(activityIndicator)] && imagePresenter.activityIndicator && [imagePresenter.activityIndicator isKindOfClass:[UIActivityIndicatorView class]];
+}
+
 + (void)imageFetchWithURL:(NSURL *)URL
                   forCell:(id<ASImagePresenter>)cell
                    inView:(__weak UIView *)view
@@ -208,7 +212,7 @@ static NSUInteger _requestTimeout;
                     if ([ipcell conformsToProtocol:@protocol(ASImagePresenter)]) {
                         id<ASImagePresenter> imagePresenter = ipcell;
                         [imagePresenter setImage:image];
-                        if (imagePresenter.activityIndicator) {
+                        if ([self imagePresenterHasActivityIndicator:imagePresenter]) {
                             [imagePresenter.activityIndicator stopAnimating];
                         }
                     }
@@ -218,20 +222,19 @@ static NSUInteger _requestTimeout;
             }
         });
     } withURL:URL];
-    if (cachedImage) {
-        [cell.activityIndicator stopAnimating];
-        if ([cachedImage isKindOfClass:[UIImage class]]) {
-            [cell setImage:cachedImage];
+    if ([cell conformsToProtocol:@protocol(ASImagePresenter)]) {
+        if (cachedImage) {
+            if ([self imagePresenterHasActivityIndicator:cell]) [cell.activityIndicator stopAnimating];
+            if ([cachedImage isKindOfClass:[UIImage class]]) {
+                [cell setImage:cachedImage];
+            } else {
+                [cell setImage:nil];
+            }
         } else {
-            [cell setImage:nil];
+            if ([self imagePresenterHasActivityIndicator:cell]) [cell.activityIndicator startAnimating];
+            [cell setImage:self.placeholder];
         }
-    } else {
-        [cell.activityIndicator startAnimating];
-        [cell setImage:self.placeholder];
     }
-    
-
-    
 }
 
 @end

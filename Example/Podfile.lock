@@ -14,10 +14,10 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - AnobiKit (0.1.9)
-  - ASGraphQLClient (0.0.3):
+  - AnobiKit (0.1.11)
+  - ASGraphQLClient (0.0.6):
     - AFNetworking (~> 3.1.0)
-    - AnobiKit (~> 0.1.0)
+    - AnobiKit (~> 0.1.11)
 
 DEPENDENCIES:
   - ASGraphQLClient (from `../`)
@@ -28,8 +28,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  AnobiKit: efa879bdcec0d36fa8083ef95569e7d719f78c64
-  ASGraphQLClient: a23b751c9107db209917e7851b602e6a3eda8bcd
+  AnobiKit: b68d7e805cad5f3b4991e6e6a8951e4f9f6b5671
+  ASGraphQLClient: 134a0bb9d7f3ee8ec5a7f14bc7663cbb0dd4e221
 
 PODFILE CHECKSUM: 6ef3253546c9bf51240aebf79f9f89128b980495
 
