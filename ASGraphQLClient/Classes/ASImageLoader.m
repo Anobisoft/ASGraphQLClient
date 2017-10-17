@@ -178,12 +178,17 @@ static NSUInteger _requestTimeout;
             }
         }
         if (fetch) {
-            UIImage *image = self.placeholder;
-            if (data) {
-                image = [UIImage imageWithData:data];
-                [cache setObject:image forKey:URL];
+            UIImage *image = nil;
+            @try {
+                if (data) {
+                    image = [UIImage imageWithData:data];
+                    if (image) [cache setObject:image forKey:URL];                    
+                }
+            } @catch (NSException *exception) {
+                NSLog(@"[ERROR] Exception: %@", exception);
+            } @finally {
+                fetch(image ?: self.placeholder, error);
             }
-            fetch(image, error);
         }
     }] resume];
     
