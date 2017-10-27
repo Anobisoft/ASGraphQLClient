@@ -13,9 +13,9 @@
 
 @implementation ASGraphQLClient
 
-static AFHTTPSessionManager *manager;
-//static NSURLSession *session;
-//static NSURLSessionConfiguration *sessionConfig;
+//static AFHTTPSessionManager *manager;
+static NSURLSession *session;
+static NSURLSessionConfiguration *sessionConfig;
 
 static NSURL *_APIURL;
 static NSString *_APIURLString;
@@ -54,12 +54,12 @@ static NSTimeInterval _defaultTimeout;
     } @catch (NSException *exception) {
         NSLog(@"[NOTICE] Exception: %@", exception);
     }
-   
+/*
     manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     [manager.requestSerializer setValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
     [manager.requestSerializer setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
+//*/
 
-    /*
     sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSMutableDictionary *HTTPAdditionalHeaders = sessionConfig.HTTPAdditionalHeaders.mutableCopy;
     HTTPAdditionalHeaders[@"Content-Type"] = @"application/x-www-form-urlencoded; charset=UTF-8";
@@ -87,7 +87,7 @@ static NSTimeInterval _defaultTimeout;
     if (!self.APIURL) @throw [NSException exceptionWithName:NSUndefinedKeyException
                                                      reason:@"APIURL undefined"
                                                    userInfo:@{NSLocalizedRecoverySuggestionErrorKey : @"Check ASGraphQLClient.plist or define APIURL with one of available methods"}];
-    /*
+    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.APIURL];
     if (timeout) request.timeoutInterval = timeout;
     request.HTTPMethod = @"POST";
@@ -111,7 +111,7 @@ static NSTimeInterval _defaultTimeout;
     }];
     [task resume];
 //*/
-    
+/*
     NSURLSessionDataTask *task = [manager POST:self.APIURLString parameters:query.representation progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
         NSDictionary *data = responseObject[@"data"];
         NSDictionary *errorInfo = responseObject[@"error"];
@@ -121,7 +121,7 @@ static NSTimeInterval _defaultTimeout;
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         fetchBlock(nil, error);
     }];
-    
+//*/
     return task;
 }
 

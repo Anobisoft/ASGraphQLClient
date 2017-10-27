@@ -22,7 +22,23 @@ static NSMutableDictionary *instancesCache;
     instancesCache = [NSMutableDictionary new];
 }
 
-- (NSDictionary *)representation {
+- (NSArray *)arrayWithKey:(NSString *)key value:(id)value {
+    NSMutableArray *mutable = [NSMutableArray new];
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *dict = value;
+        
+        mutable addObjectsFromArray:[self arrayWithKey:[NSString stringWithFormat:@"%@[%@]", key, nestedKey] value]
+    } else if ([value isKindOfClass:[NSArray class]]) {
+        NSArray *array = value;
+    }
+}
+
+- (NSData *)representationData {
+    
+    return [NSData data];
+}
+
+- (NSDictionary *)keyedRepresentation {
     NSDictionary *parameters = @{@"query" : string};
     if (self.variables) {
         NSMutableDictionary *mutable = parameters.mutableCopy;

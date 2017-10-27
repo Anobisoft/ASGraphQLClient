@@ -8,10 +8,9 @@
 #import <Foundation/Foundation.h>
 
 @protocol ASGraphQueryPrivate <NSObject>
-@property (readonly) NSDictionary *representation;
-
+@property (readonly) NSData *representationData;
 @end
 
-@interface ASGraphQuery(Private) <ASGraphQueryPrivate>
+@interface ASGraphQuery(Private) <AKObjectReverseMapping, ASGraphQueryPrivate>
 
 @end
