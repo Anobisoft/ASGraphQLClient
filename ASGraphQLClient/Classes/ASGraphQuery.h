@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AnobiKit/AnobiKit.h>
 
-@interface ASGraphQuery : NSObject <DisableStdInstantiating>
+@interface ASGraphQuery : NSObject <DisableNSInit>
 
 @property (readonly) NSString *string;
 @property (strong) NSDictionary *variables;
