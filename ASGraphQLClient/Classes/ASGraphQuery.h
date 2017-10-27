@@ -11,7 +11,6 @@
 
 @interface ASGraphQuery : NSObject <DisableNSInit>
 
-@property (readonly) NSString *string;
 @property (strong) NSDictionary *variables;
 
 + (instancetype)queryWithName:(NSString *)qname;

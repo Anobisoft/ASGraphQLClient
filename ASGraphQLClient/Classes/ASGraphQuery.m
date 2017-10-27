@@ -7,11 +7,12 @@
 //
 
 #import "ASGraphQuery.h"
+#import "ASGraphQueryPrivate.h"
 
 #define ASGraphQueryFileExt @"graphql"
 
 @implementation ASGraphQuery {
-	NSString *name;
+    NSString *string;
 }
 
 static NSMutableDictionary *instancesCache;
@@ -19,6 +20,16 @@ static NSMutableDictionary *instancesCache;
 + (void)initialize {
 	[super initialize];
     instancesCache = [NSMutableDictionary new];
+}
+
+- (NSDictionary *)representation {
+    NSDictionary *parameters = @{@"query" : string};
+    if (self.variables) {
+        NSMutableDictionary *mutable = parameters.mutableCopy;
+        mutable[@"variables"] = self.variables;
+        parameters = mutable.copy;
+    }
+    return parameters;
 }
 
 + (instancetype)queryWithName:(NSString *)qname;  {
@@ -42,9 +53,9 @@ static NSMutableDictionary *instancesCache;
 - (instancetype)initWithFilePath:(NSString *)filePath {    
     if (self = [super init]) {
         NSError *error = nil;
-        _string = [NSString stringWithContentsOfFile:filePath
-                                            encoding:NSUTF8StringEncoding
-                                               error:&error];
+        string = [NSString stringWithContentsOfFile:filePath
+                                           encoding:NSUTF8StringEncoding
+                                              error:&error];
         if (error) {
             NSLog(@"[ERROR] %@", error);
         }
@@ -53,7 +64,7 @@ static NSMutableDictionary *instancesCache;
 }
 
 - (NSUInteger)hash {
-	return self.string.hash ^ _variables.hash;
+	return string.hash ^ _variables.hash;
 }
 
 @end

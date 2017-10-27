@@ -39,8 +39,8 @@ longer...
 # s.frameworks = "SomeFramework", "AnotherFramework"
 # s.library   = "iconv"
 # s.libraries = "iconv", "xml2"
-  s.dependency 'AFNetworking', '~> 3.1.0'
   s.dependency 'AnobiKit', '~> 0.1.14'
+# s.dependency 'AFNetworking', '~> 3.1.0'
 
   s.requires_arc = true
 # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
