@@ -7,25 +7,31 @@
 //
 
 #import "ASGraphQLClient.h"
-//#import <AFNetworking/AFNetworking.h>
+#import <AFNetworking/AFNetworking.h>
 #import <AnobiKit/AKConfig.h>
 #import "ASGraphQueryPrivate.h"
 
 @implementation ASGraphQLClient
 
-//static AFHTTPSessionManager *manager;
-static NSURLSession *session;
-static NSURLSessionConfiguration *sessionConfig;
+static AFHTTPSessionManager *manager;
+//static NSURLSession *session;
+//static NSURLSessionConfiguration *sessionConfig;
 
 static NSURL *_APIURL;
+static NSString *_APIURLString;
 + (NSURL *)APIURL {
     return _APIURL;
 }
++ (NSString *)APIURLString {
+    return _APIURLString;
+}
 + (void)setAPIURL:(NSURL *)APIURL {
     _APIURL = APIURL;
+    _APIURLString = [APIURL absoluteString];
 }
-+ (void)setAPIURLString:(NSString *)APIURLString {
-    self.APIURL = [NSURL URLWithString:APIURLString];
++ (void)setAPIURLString:(NSString *)APIURLString {    
+    _APIURL = [NSURL URLWithString:APIURLString];
+    _APIURLString = APIURLString;
 }
 
 static NSTimeInterval _defaultTimeout;
@@ -41,10 +47,6 @@ static NSTimeInterval _defaultTimeout;
 
 + (void)initialize {
     [super initialize];
-   
-//    manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-//    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
-//    [manager.requestSerializer setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
     
     @try {
         self.APIURLString = [AKConfig<NSDictionary *> configWithName:self.class.description][@"APIURL"];
@@ -52,7 +54,12 @@ static NSTimeInterval _defaultTimeout;
     } @catch (NSException *exception) {
         NSLog(@"[NOTICE] Exception: %@", exception);
     }
-    
+   
+    manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+    [manager.requestSerializer setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
+
+    /*
     sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSMutableDictionary *HTTPAdditionalHeaders = sessionConfig.HTTPAdditionalHeaders.mutableCopy;
     HTTPAdditionalHeaders[@"Content-Type"] = @"application/x-www-form-urlencoded; charset=UTF-8";
@@ -62,7 +69,7 @@ static NSTimeInterval _defaultTimeout;
     }    
 //    sessionConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
     session = [NSURLSession sessionWithConfiguration:sessionConfig];
-
+//*/
 
 }
 
@@ -80,44 +87,40 @@ static NSTimeInterval _defaultTimeout;
     if (!self.APIURL) @throw [NSException exceptionWithName:NSUndefinedKeyException
                                                      reason:@"APIURL undefined"
                                                    userInfo:@{NSLocalizedRecoverySuggestionErrorKey : @"Check ASGraphQLClient.plist or define APIURL with one of available methods"}];
-    
-    NSMutableURLRequest *request = timeout ? [NSMutableURLRequest requestWithURL:self.APIURL cachePolicy:0 timeoutInterval:timeout] : [NSMutableURLRequest requestWithURL:self.APIURL];
+    /*
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.APIURL];
+    if (timeout) request.timeoutInterval = timeout;
     request.HTTPMethod = @"POST";
-    NSError *serializationError;
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:query.representation options:0 error:&serializationError];
+    request.HTTPBody = [NSData data];
     NSURLSessionDataTask *task = nil;
-    if (serializationError) {
-        NSLog(@"[ERROR] %@", serializationError);
-    } else {
-        task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            NSError *deserializationError;
-            id JSONObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&deserializationError];
-            if (deserializationError) {
-                NSLog(@"[ERROR] %@", deserializationError);
-            }
-            if (JSONObject) {
-                NSDictionary *data = JSONObject[@"data"];
-                NSDictionary *errorInfo = JSONObject[@"error"];
-                NSError *error = nil;
-                if (errorInfo) error = [NSError errorWithDomain:@"ASGraphQLClient" code:0 userInfo:errorInfo];
-                fetchBlock(data, error);
-            } else {
-                fetchBlock(nil, error);
-            }
-        }];
-        [task resume];
-    }
-
+    task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSError *deserializationError;
+        id JSONObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&deserializationError];
+        if (deserializationError) {
+            NSLog(@"[ERROR] %@", deserializationError);
+        }
+        if (JSONObject) {
+            NSDictionary *data = JSONObject[@"data"];
+            NSDictionary *errorInfo = JSONObject[@"error"];
+            NSError *error = nil;
+            if (errorInfo) error = [NSError errorWithDomain:@"ASGraphQLClient" code:0 userInfo:errorInfo];
+            fetchBlock(data, error);
+        } else {
+            fetchBlock(nil, error);
+        }
+    }];
+    [task resume];
+//*/
     
-//    NSURLSessionDataTask *task = [manager POST:APIURLString parameters:query.representation progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
-//        NSDictionary *data = responseObject[@"data"];
-//        NSDictionary *errorInfo = responseObject[@"error"];
-//        NSError *error = nil;
-//        if (errorInfo) error = [NSError errorWithDomain:@"ASGraphQL" code:0 userInfo:errorInfo];
-//        fetchBlock(data, error);
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        fetchBlock(nil, error);
-//    }];
+    NSURLSessionDataTask *task = [manager POST:self.APIURLString parameters:query.representation progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
+        NSDictionary *data = responseObject[@"data"];
+        NSDictionary *errorInfo = responseObject[@"error"];
+        NSError *error = nil;
+        if (errorInfo) error = [NSError errorWithDomain:@"ASGraphQL" code:0 userInfo:errorInfo];
+        fetchBlock(data, error);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        fetchBlock(nil, error);
+    }];
     
     return task;
 }

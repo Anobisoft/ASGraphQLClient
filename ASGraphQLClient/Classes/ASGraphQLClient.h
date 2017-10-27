@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ASGraphQLClient : NSObject <Abstract>
 
 @property (class) NSURL *APIURL;
+@property (class) NSString *APIURLString;
 @property (class) NSTimeInterval defaultTimeout;
-+ (void)setAPIURLString:(NSString *)APIURLString;
 
 + (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                      fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;
