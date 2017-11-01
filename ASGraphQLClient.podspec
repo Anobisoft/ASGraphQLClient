@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name             = 'ASGraphQLClient'
-  s.version          = '0.0.8'
+  s.version          = '0.0.9'
   s.summary          = 'ASGraphQLClient - GraphQL Client'
 
   s.description      = <<-DESC
@@ -39,7 +39,7 @@ longer...
 # s.frameworks = "SomeFramework", "AnotherFramework"
 # s.library   = "iconv"
 # s.libraries = "iconv", "xml2"
-  s.dependency 'AnobiKit', '~> 0.1.14'
+  s.dependency 'AnobiKit', '~> 0.1.15'
 # s.dependency 'AFNetworking', '~> 3.1.0'
 
   s.requires_arc = true
