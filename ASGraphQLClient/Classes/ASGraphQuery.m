@@ -26,16 +26,27 @@ static NSMutableDictionary *instancesCache;
     NSMutableArray *mutable = [NSMutableArray new];
     if ([value isKindOfClass:[NSDictionary class]]) {
         NSDictionary *dict = value;
-        
-        mutable addObjectsFromArray:[self arrayWithKey:[NSString stringWithFormat:@"%@[%@]", key, nestedKey] value]
+        for (NSString *nestedKey in dict.allKeys) {
+            [mutable addObjectsFromArray:[self arrayWithKey:(key ? [NSString stringWithFormat:@"%@[%@]", key, nestedKey] : nestedKey) value:dict[nestedKey]]];
+        }
     } else if ([value isKindOfClass:[NSArray class]]) {
         NSArray *array = value;
+        for (id object in array) {
+            [mutable addObjectsFromArray:[self arrayWithKey:[NSString stringWithFormat:@"%@[]", key] value:object]];
+        }
+    } else {
+        [mutable addObject:[NSString stringWithFormat:@"%@=%@", key, value]];
     }
+    return mutable.copy;
+}
+
+- (NSString *)representationString {
+    NSString *params = [[self arrayWithKey:nil value:self.keyedRepresentation] componentsJoinedByString:@"&"];
+    return [params stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
 - (NSData *)representationData {
-    
-    return [NSData data];
+    return [self.representationString dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSDictionary *)keyedRepresentation {

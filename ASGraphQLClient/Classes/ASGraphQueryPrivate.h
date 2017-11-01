@@ -11,6 +11,6 @@
 @property (readonly) NSData *representationData;
 @end
 
-@interface ASGraphQuery(Private) <AKObjectReverseMapping, ASGraphQueryPrivate>
+@interface ASGraphQuery(Private) <ASGraphQueryPrivate>
 
 @end

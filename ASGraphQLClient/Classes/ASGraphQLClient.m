@@ -91,7 +91,7 @@ static NSTimeInterval _defaultTimeout;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.APIURL];
     if (timeout) request.timeoutInterval = timeout;
     request.HTTPMethod = @"POST";
-    request.HTTPBody = [NSData data];
+    request.HTTPBody = [query representationData];
     NSURLSessionDataTask *task = nil;
     task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSError *deserializationError;
