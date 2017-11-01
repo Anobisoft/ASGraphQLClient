@@ -7,7 +7,6 @@
 //
 
 #import "ASGraphQLClient.h"
-#import <AFNetworking/AFNetworking.h>
 #import <AnobiKit/AKConfig.h>
 #import "ASGraphQueryPrivate.h"
 
