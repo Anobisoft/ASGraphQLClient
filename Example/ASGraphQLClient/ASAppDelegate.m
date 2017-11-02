@@ -7,11 +7,18 @@
 //
 
 #import "ASAppDelegate.h"
+#import <ASGraphQLClient/ASGraphQLClient.h>
 
 @implementation ASAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
+    ASGraphQuery *query = [ASGraphQuery queryWithName:@"example"];
+    query.variables = @{
+                        @"episode" : @"JEDI"
+                        };
+    [ASGraphQLClient query:query fetchBlock:^(NSDictionary * _Nullable data, NSError * _Nullable error) {
+        NSLog(@"data: %@", data);
+    }];
     return YES;
 }
 

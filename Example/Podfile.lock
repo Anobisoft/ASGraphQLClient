@@ -1,7 +1,7 @@
 PODS:
-  - AnobiKit (0.1.14)
-  - ASGraphQLClient (0.0.8):
-    - AnobiKit (~> 0.1.14)
+  - AnobiKit (0.1.16)
+  - ASGraphQLClient (0.1.0):
+    - AnobiKit (~> 0.1.16)
 
 DEPENDENCIES:
   - ASGraphQLClient (from `../`)
@@ -11,8 +11,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  AnobiKit: aa66dfb223a49427a1875acf3d19486acbce1a8f
-  ASGraphQLClient: 750b088cae69fa7c94ec01d351e0aef55e336213
+  AnobiKit: 6964a898beeed5fe0ee9efa26bfbd3e86fb0cb6b
+  ASGraphQLClient: 3dd8cc0e5fdff9bcb7fa645852d338befdff9d88
 
 PODFILE CHECKSUM: 6ef3253546c9bf51240aebf79f9f89128b980495
 

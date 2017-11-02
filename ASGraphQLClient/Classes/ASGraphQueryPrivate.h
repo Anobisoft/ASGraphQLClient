@@ -6,11 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AnobiKit/AKObjectMapping.h>
 
 @protocol ASGraphQueryPrivate <NSObject>
 @property (readonly) NSData *representationData;
 @end
 
-@interface ASGraphQuery(Private) <ASGraphQueryPrivate>
+@interface ASGraphQuery(Private) <ASGraphQueryPrivate, AKObjectReverseMapping>
 
 @end

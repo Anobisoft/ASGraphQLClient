@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>APIURL</key>
-	<string>https://api.github.com/graphql</string>
+	<string>https://api.anobisoft.ru</string>
 	<key>defaultTimeout</key>
-	<integer>30</integer>
+	<integer>15</integer>
 </dict>
 </plist>

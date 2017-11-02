@@ -22,14 +22,28 @@ static NSMutableDictionary *instancesCache;
     instancesCache = [NSMutableDictionary new];
 }
 
+- (NSDictionary *)keyedRepresentation {
+    NSDictionary *parameters = @{@"query" : string};
+    if (self.variables) {
+        NSMutableDictionary *mutable = parameters.mutableCopy;
+        mutable[@"variables"] = self.variables;
+        parameters = mutable.copy;
+    }
+    return parameters;
+}
+
 - (NSArray *)arrayWithKey:(NSString *)key value:(id)value {
     NSMutableArray *mutable = [NSMutableArray new];
+    if ([value conformsToProtocol:@protocol(AKObjectReverseMapping)]) {
+        id<AKObjectReverseMapping> reverseMapped = value;
+        value = reverseMapped.keyedRepresentation;
+    }
     if ([value isKindOfClass:[NSDictionary class]]) {
         NSDictionary *dict = value;
         for (NSString *nestedKey in dict.allKeys) {
             [mutable addObjectsFromArray:[self arrayWithKey:(key ? [NSString stringWithFormat:@"%@[%@]", key, nestedKey] : nestedKey) value:dict[nestedKey]]];
         }
-    } else if ([value isKindOfClass:[NSArray class]]) {
+    } else if ([value isKindOfClass:[NSArray class]] || [value isKindOfClass:[NSSet class]]) {
         NSArray *array = value;
         for (id object in array) {
             [mutable addObjectsFromArray:[self arrayWithKey:[NSString stringWithFormat:@"%@[]", key] value:object]];
@@ -41,22 +55,12 @@ static NSMutableDictionary *instancesCache;
 }
 
 - (NSString *)representationString {
-    NSString *params = [[self arrayWithKey:nil value:self.keyedRepresentation] componentsJoinedByString:@"&"];
+    NSString *params = [[self arrayWithKey:nil value:self] componentsJoinedByString:@"&"];
     return [params stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
 - (NSData *)representationData {
     return [self.representationString dataUsingEncoding:NSUTF8StringEncoding];
-}
-
-- (NSDictionary *)keyedRepresentation {
-    NSDictionary *parameters = @{@"query" : string};
-    if (self.variables) {
-        NSMutableDictionary *mutable = parameters.mutableCopy;
-        mutable[@"variables"] = self.variables;
-        parameters = mutable.copy;
-    }
-    return parameters;
 }
 
 + (instancetype)queryWithName:(NSString *)qname;  {
@@ -92,6 +96,13 @@ static NSMutableDictionary *instancesCache;
 
 - (NSUInteger)hash {
 	return string.hash ^ _variables.hash;
+}
+
+- (BOOL)isEqual:(ASGraphQuery *)object {
+    if (![object.class isKindOfClass:self.class]) return false;
+    if (object.hash != self.hash) return false;
+    return [self.representationData isEqualToData:object.representationData];
+    
 }
 
 @end
