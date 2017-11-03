@@ -7,12 +7,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AnobiKit/AKTypes.h>
-#import <ASGraphQLClient/ASGraphQLClientServerReachabilityUIDelegate.h>
+#import <ASGraphQLClient/ASGraphQLClientUIDelegate.h>
 
 @interface ASGraphQLClientDataTaskQueue : NSObject <DisableNSInit>
 
 + (instancetype)instantiateWithAPIURL:(NSURL *)APIURL;
 - (void)enqueueTask:(NSURLSessionDataTask *)task;
-@property (weak) id<ASGraphQLClientServerReachabilityUIDelegate> UIDelegate;
+@property (weak) id<ASGraphQLClientUIDelegate> UIDelegate;
 
 @end

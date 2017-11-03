@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ASGraphQLClient/ASGraphQuery.h>
-#import <ASGraphQLClient/ASGraphQLClientServerReachabilityUIDelegate.h>
+#import <ASGraphQLClient/ASGraphQLClientUIDelegate.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +19,7 @@ extern NSString * const ASGraphQLClientErrorDomain;
 @property (class) NSURL *APIURL;
 @property (class) NSString *APIURLString;
 @property (class) NSTimeInterval defaultTimeout;
-@property (class) id<ASGraphQLClientServerReachabilityUIDelegate> UIDelegate;
+@property (class) id<ASGraphQLClientUIDelegate> UIDelegate;
 
 + (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                      fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;

@@ -23,10 +23,10 @@ static NSException * AKUndefinedAPIURLException;
 #pragma mark -
 #pragma mark - UIDelegate
 
-+ (id<ASGraphQLClientServerReachabilityUIDelegate>)UIDelegate {
++ (id<ASGraphQLClientUIDelegate>)UIDelegate {
     return taskQueue.UIDelegate;
 }
-+ (void)setUIDelegate:(id<ASGraphQLClientServerReachabilityUIDelegate>)UIDelegate {
++ (void)setUIDelegate:(id<ASGraphQLClientUIDelegate>)UIDelegate {
     if (taskQueue) taskQueue.UIDelegate = UIDelegate;
     else @throw AKUndefinedAPIURLException;
 }
