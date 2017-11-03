@@ -7,23 +7,63 @@
 //
 
 #import "ASGraphQuery.h"
-#import "ASGraphQueryPrivate.h"
+#import "ASGraphQueryProtected.h"
 
 #define ASGraphQueryFileExt @"graphql"
 
+@interface ASGraphQuery() <AKObjectReverseMapping>
+@end
+
 @implementation ASGraphQuery {
-    NSString *string;
+    NSString *query;
 }
+
+#pragma mark -
+#pragma mark - Instantiation
 
 static NSMutableDictionary *instancesCache;
 
 + (void)initialize {
-	[super initialize];
+    [super initialize];
     instancesCache = [NSMutableDictionary new];
 }
 
++ (instancetype)queryWithName:(NSString *)qname;  {
+    if (!qname.length) return nil;
+    id instance = instancesCache[qname];
+    if (instance) return instance;
+    
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:qname ofType:ASGraphQueryFileExt];
+    BOOL isDirectory;
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDirectory];
+    if (filePath && fileExists && !isDirectory) {
+        instance = [[self alloc] initWithFilePath:(NSString *)filePath];
+        instancesCache[qname] = instance;
+        return instance;
+    } else {
+        NSLog(@"[ERROR] filePath '%@' %@exists, is %@directory", filePath, fileExists ? @"" : @"not ", isDirectory ? @"" : @"not ");
+    }
+    return nil;
+}
+
+- (instancetype)initWithFilePath:(NSString *)filePath {
+    if (self = [super init]) {
+        NSError *error = nil;
+        query = [NSString stringWithContentsOfFile:filePath
+                                          encoding:NSUTF8StringEncoding
+                                             error:&error];
+        if (error) {
+            NSLog(@"[ERROR] %@", error);
+        }
+    }
+    return self;
+}
+
+#pragma mark -
+#pragma mark - AKObjectReverseMapping
+
 - (NSDictionary *)keyedRepresentation {
-    NSDictionary *parameters = @{@"query" : string};
+    NSDictionary *parameters = @{@"query" : query};
     if (self.variables) {
         NSMutableDictionary *mutable = parameters.mutableCopy;
         mutable[@"variables"] = self.variables;
@@ -31,6 +71,9 @@ static NSMutableDictionary *instancesCache;
     }
     return parameters;
 }
+
+#pragma mark -
+#pragma mark - Serialization
 
 - (NSArray *)arrayWithKey:(NSString *)key value:(id)value {
     NSMutableArray *mutable = [NSMutableArray new];
@@ -59,43 +102,11 @@ static NSMutableDictionary *instancesCache;
     return [params stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
-- (NSData *)representationData {
-    return [self.representationString dataUsingEncoding:NSUTF8StringEncoding];
-}
-
-+ (instancetype)queryWithName:(NSString *)qname;  {
-    if (!qname.length) return nil;
-    id instance = instancesCache[qname];
-    if (instance) return instance;
-    
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:qname ofType:ASGraphQueryFileExt];
-    BOOL isDirectory;
-    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDirectory];
-    if (filePath && fileExists && !isDirectory) {
-        instance = [[self alloc] initWithFilePath:(NSString *)filePath];
-        instancesCache[qname] = instance;
-        return instance;
-    } else {
-        NSLog(@"[ERROR] filePath '%@' %@exists, is %@directory", filePath, fileExists ? @"" : @"not ", isDirectory ? @"" : @"not ");
-    }
-    return nil;
-}
-
-- (instancetype)initWithFilePath:(NSString *)filePath {    
-    if (self = [super init]) {
-        NSError *error = nil;
-        string = [NSString stringWithContentsOfFile:filePath
-                                           encoding:NSUTF8StringEncoding
-                                              error:&error];
-        if (error) {
-            NSLog(@"[ERROR] %@", error);
-        }
-    }
-    return self;
-}
+#pragma mark -
+#pragma mark - Comparation
 
 - (NSUInteger)hash {
-	return string.hash ^ _variables.hash;
+	return query.hash ^ _variables.hash;
 }
 
 - (BOOL)isEqual:(ASGraphQuery *)object {
@@ -103,6 +114,17 @@ static NSMutableDictionary *instancesCache;
     if (object.hash != self.hash) return false;
     return [self.representationData isEqualToData:object.representationData];
     
+}
+
+@end
+
+#pragma mark -
+#pragma mark - Protected
+
+@implementation ASGraphQuery(Protected)
+
+- (NSData *)representationData {
+    return [self.representationString dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 @end

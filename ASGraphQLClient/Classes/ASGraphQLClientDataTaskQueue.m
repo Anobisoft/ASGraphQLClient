@@ -16,6 +16,9 @@
     NSMutableArray<NSURLSessionDataTask *> *suspendedTasks;
 }
 
+#pragma mark -
+#pragma mark - Instantiation
+
 + (instancetype)instantiateWithAPIURL:(NSURL *)APIURL {
     return [[self alloc] initWithAPIURL:APIURL];
 }
@@ -23,25 +26,14 @@
 - (instancetype)initWithAPIURL:(NSURL *)APIURL {
     if (self = [super init]) {
         serverReachability = [AKReachability reachabilityWithHostname:APIURL.host];
-        serverReachability.delegate = self;
         suspendedTasks = [NSMutableArray new];
+        serverReachability.delegate = self;
+
     }
     return self;
 }
 
-
-- (void)reachability:(AKReachability *)reachability didChangeStatus:(AKReachabilityStatus)status {
-    if (status && suspendedTasks) {
-        for (NSURLSessionDataTask *task in suspendedTasks) {
-            [task resume];
-        }
-    } else {
-        suspendedTasks = [NSMutableArray new];
-    }
-    if (self.UIDelegate && status) {
-        [self.UIDelegate hideServerNotReachableAlert];
-    }
-}
+#pragma mark -
 
 - (void)enqueueTask:(NSURLSessionDataTask *)task {
     if (serverReachability.currentStatus) {
@@ -49,8 +41,31 @@
     } else {
         if (!suspendedTasks) suspendedTasks = [NSMutableArray new];
         [suspendedTasks addObject:task];
-        if (self.UIDelegate) [self.UIDelegate showServerNotReachableAlert];
+        if (self.UIDelegate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.UIDelegate showServerNotReachableAlert];
+            });            
+        }
     }
 }
+
+#pragma mark -
+#pragma mark - AKReachabilityDelegate
+
+- (void)reachability:(AKReachability *)reachability didChangeStatus:(AKReachabilityStatus)status {
+    if (status) {
+        for (NSURLSessionDataTask *task in suspendedTasks) {
+            [task resume];
+        }
+        [suspendedTasks removeAllObjects];
+    }
+    if (self.UIDelegate && status) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.UIDelegate hideServerNotReachableAlert];
+        });
+    }
+}
+
+
 
 @end

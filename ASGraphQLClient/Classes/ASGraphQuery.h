@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AnobiKit/AKTypes.h>
+#import <AnobiKit/AKObjectMapping.h>
 
 @interface ASGraphQuery : NSObject <DisableNSInit>
 

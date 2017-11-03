@@ -8,7 +8,7 @@
 
 #import "ASGraphQLClient.h"
 #import <AnobiKit/AKConfig.h>
-#import "ASGraphQueryPrivate.h"
+#import "ASGraphQueryProtected.h"
 #import "ASGraphQLClientDataTaskQueue.h"
 
 NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
@@ -47,10 +47,12 @@ static NSString *_APIURLString;
     _APIURLString = [APIURL absoluteString];
     taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithAPIURL:_APIURL];
 }
-+ (void)setAPIURLString:(NSString *)APIURLString {    
-    _APIURL = [NSURL URLWithString:APIURLString];
-    _APIURLString = APIURLString;
-    taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithAPIURL:_APIURL];
++ (void)setAPIURLString:(NSString *)APIURLString {
+    if (![APIURLString isEqualToString:_APIURLString]) {
+        _APIURL = [NSURL URLWithString:APIURLString];
+        _APIURLString = APIURLString;
+        taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithAPIURL:_APIURL];
+    }
 }
 
 #pragma mark -
