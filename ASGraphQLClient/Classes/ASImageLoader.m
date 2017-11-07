@@ -29,7 +29,9 @@
     return [self cellForRowAtIndexPath:ip];
 }
 - (void)reloadCellAtIndexPath:(NSIndexPath *)ip {
+    [self beginUpdates];
     [self reloadRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self endUpdates];
 }
 @end
 
@@ -41,7 +43,14 @@
     return [self cellForItemAtIndexPath:ip];
 }
 - (void)reloadCellAtIndexPath:(NSIndexPath *)ip {
-    [self reloadItemsAtIndexPaths:@[ip]];
+    @try {
+        [self reloadItemsAtIndexPaths:@[ip]];
+    } @catch (NSException *exception) {
+        NSLog(@"[ERROR] %@", exception);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self reloadCellAtIndexPath:ip];
+        });
+    }
 }
 @end
 
