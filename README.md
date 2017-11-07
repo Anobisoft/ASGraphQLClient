@@ -2,8 +2,10 @@
 
 [![CI Status](http://img.shields.io/travis/Anobisoft/ASGraphQLClient.svg?style=flat)](https://travis-ci.org/Anobisoft/ASGraphQLClient)
 [![Version](https://img.shields.io/cocoapods/v/ASGraphQLClient.svg?style=flat)](http://cocoapods.org/pods/ASGraphQLClient)
-[![License](https://img.shields.io/cocoapods/l/ASGraphQLClient.svg?style=flat)](http://cocoapods.org/pods/ASGraphQLClient)
+[![Downloads](https://img.shields.io/cocoapods/dt/ASGraphQLClient.svg)](http://cocoapods.org/pods/ASGraphQLClient)
 [![Platform](https://img.shields.io/cocoapods/p/ASGraphQLClient.svg?style=flat)](http://cocoapods.org/pods/ASGraphQLClient)
+[![Language](https://img.shields.io/github/languages/top/Anobisoft/ASGraphQLClient.svg)](https://github.com/Anobisoft/ASGraphQLClient)
+[![License](https://img.shields.io/cocoapods/l/ASGraphQLClient.svg?style=flat)](http://cocoapods.org/pods/ASGraphQLClient)
 [![Twitter](https://img.shields.io/badge/twitter-@Anobisoft-blue.svg?style=flat)](http://twitter.com/Anobisoft)
 
 GraphQL Client
