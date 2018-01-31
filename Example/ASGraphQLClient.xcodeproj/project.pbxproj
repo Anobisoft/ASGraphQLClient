@@ -20,7 +20,6 @@
 		6A68C1401FAB5D2A00BCA48F /* example.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 6A68C13F1FAB5D2A00BCA48F /* example.graphql */; };
 		6AA3B68C1F38AEFB001D70DD /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AA3B68B1F38AEFB001D70DD /* XCTest.framework */; };
 		6ACF19851F7E0CC200712368 /* ASAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF19811F7E0CC200712368 /* ASAppDelegate.m */; };
-		6ACF19861F7E0CC200712368 /* ASGraphQLClient.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6ACF19821F7E0CC200712368 /* ASGraphQLClient.plist */; };
 		6ACF19871F7E0CC200712368 /* ASMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF19841F7E0CC200712368 /* ASMainViewController.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
@@ -59,7 +58,6 @@
 		6AA3B68B1F38AEFB001D70DD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6ACF19801F7E0CC200712368 /* ASAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASAppDelegate.h; sourceTree = "<group>"; };
 		6ACF19811F7E0CC200712368 /* ASAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASAppDelegate.m; sourceTree = "<group>"; };
-		6ACF19821F7E0CC200712368 /* ASGraphQLClient.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ASGraphQLClient.plist; sourceTree = "<group>"; };
 		6ACF19831F7E0CC200712368 /* ASMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASMainViewController.h; sourceTree = "<group>"; };
 		6ACF19841F7E0CC200712368 /* ASMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASMainViewController.m; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -139,7 +137,6 @@
 				6A68C13F1FAB5D2A00BCA48F /* example.graphql */,
 				6ACF19801F7E0CC200712368 /* ASAppDelegate.h */,
 				6ACF19811F7E0CC200712368 /* ASAppDelegate.m */,
-				6ACF19821F7E0CC200712368 /* ASGraphQLClient.plist */,
 				6ACF19831F7E0CC200712368 /* ASMainViewController.h */,
 				6ACF19841F7E0CC200712368 /* ASMainViewController.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
@@ -291,7 +288,6 @@
 			files = (
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
-				6ACF19861F7E0CC200712368 /* ASGraphQLClient.plist in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6A68C1401FAB5D2A00BCA48F /* example.graphql in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,

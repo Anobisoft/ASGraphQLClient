@@ -14,17 +14,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString * const ASGraphQLClientErrorDomain;
 
-@interface ASGraphQLClient : NSObject <Abstract>
+@interface ASGraphQLClient : NSObject
 
-@property (class) NSURL *APIURL;
-@property (class) NSString *APIURLString;
-@property (class) NSTimeInterval defaultTimeout;
-@property (class) id<ASGraphQLClientUIDelegate> UIDelegate;
++ (instancetype)shared;
++ (instancetype)sharedWithURL:(NSURL *)URL;
++ (instancetype)sharedWithURLString:(NSString *)URLString;
 
-+ (NSURLSessionDataTask *)query:(ASGraphQuery *)query
+@property (readonly) NSURL *APIURL;
+@property (nonatomic) NSString *authToken;
+@property NSTimeInterval defaultTimeout;
+@property id<ASGraphQLClientUIDelegate> UIDelegate;
+
+- (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                      fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;
 
-+ (NSURLSessionDataTask *)query:(ASGraphQuery *)query
+- (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                         timeout:(NSTimeInterval)timeout
                      fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;
 

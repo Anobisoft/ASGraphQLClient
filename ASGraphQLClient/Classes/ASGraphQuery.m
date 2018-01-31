@@ -15,7 +15,7 @@
 @end
 
 @implementation ASGraphQuery {
-    NSString *query;
+    NSString *_query;
 }
 
 #pragma mark -
@@ -28,7 +28,18 @@ static NSMutableDictionary *instancesCache;
     instancesCache = [NSMutableDictionary new];
 }
 
-+ (instancetype)queryWithName:(NSString *)qname;  {
++ (instancetype)queryWithString:(NSString *)query {
+    return [[self alloc] initWithString:query];
+}
+
+- (instancetype)initWithString:(NSString *)query {
+    if (self = [super init]) {
+        query = query;
+    }
+    return self;
+}
+
++ (instancetype)queryWithName:(NSString *)qname {
     if (!qname.length) return nil;
     id instance = instancesCache[qname];
     if (instance) return instance;
@@ -49,9 +60,9 @@ static NSMutableDictionary *instancesCache;
 - (instancetype)initWithFilePath:(NSString *)filePath {
     if (self = [super init]) {
         NSError *error = nil;
-        query = [NSString stringWithContentsOfFile:filePath
-                                          encoding:NSUTF8StringEncoding
-                                             error:&error];
+        _query = [NSString stringWithContentsOfFile:filePath
+                                           encoding:NSUTF8StringEncoding
+                                              error:&error];
         if (error) {
             NSLog(@"[ERROR] %@", error);
         }
@@ -63,7 +74,7 @@ static NSMutableDictionary *instancesCache;
 #pragma mark - AKObjectReverseMapping
 
 - (NSDictionary *)keyedRepresentation {
-    NSDictionary *parameters = @{@"query" : query};
+    NSDictionary *parameters = @{@"query" : _query};
     if (self.variables) {
         NSMutableDictionary *mutable = parameters.mutableCopy;
         mutable[@"variables"] = self.variables;
@@ -106,7 +117,7 @@ static NSMutableDictionary *instancesCache;
 #pragma mark - Comparation
 
 - (NSUInteger)hash {
-	return query.hash ^ _variables.hash;
+	return _query.hash ^ _variables.hash;
 }
 
 - (BOOL)isEqual:(ASGraphQuery *)object {

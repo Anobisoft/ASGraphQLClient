@@ -11,9 +11,8 @@
 #import <AnobiKit/AKObjectMapping.h>
 
 @interface ASGraphQuery : NSObject <DisableNSInit>
-
-@property (strong) NSDictionary<NSString *, id> *variables;
-
 + (instancetype)queryWithName:(NSString *)qname;
++ (instancetype)queryWithString:(NSString *)query;
+@property (strong) NSDictionary<NSString *, id> *variables;
 
 @end

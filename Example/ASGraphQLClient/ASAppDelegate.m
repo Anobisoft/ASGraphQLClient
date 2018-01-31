@@ -16,7 +16,9 @@
     query.variables = @{
                         @"episode" : @"JEDI"
                         };
-    [ASGraphQLClient query:query fetchBlock:^(NSDictionary * _Nullable data, NSError * _Nullable error) {
+    [ASGraphQLClient sharedWithURLString:@"https://api.github.com/graphql"];
+    [[ASGraphQLClient shared] query:query
+                         fetchBlock:^(NSDictionary * _Nullable data, NSError * _Nullable error) {
         NSLog(@"data: %@", data);
     }];
     return YES;

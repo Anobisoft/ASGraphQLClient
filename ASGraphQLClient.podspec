@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name             = 'ASGraphQLClient'
-  s.version          = '0.1.3'
+  s.version          = '0.2.0'
   s.summary          = 'ASGraphQLClient - GraphQL Client'
 
   s.description      = <<-DESC
@@ -39,7 +39,7 @@ longer...
 # s.frameworks = "SomeFramework", "AnotherFramework"
 # s.library   = "iconv"
 # s.libraries = "iconv", "xml2"
-  s.dependency 'AnobiKit', '~> 0.1.17'
+  s.dependency 'AnobiKit', '~> 0.2.1'
 
   s.requires_arc = true
 # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
