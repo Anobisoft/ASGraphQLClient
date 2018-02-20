@@ -7,7 +7,7 @@
 //
 
 #import "ASImageLoader.h"
-#import <AnobiKit/AKConfig.h>
+#import <AnobiKit/AKConfigManager.h>
 
 #define ASImageLoaderDefaults_requestTimeout 30
 #define ASImageLoaderDefaults_cacheMemoryCapacity 4 * 0x100000
@@ -125,7 +125,7 @@ static NSUInteger _requestTimeout;
     _cacheDiskCapacity = ASImageLoaderDefaults_cacheDiskCapacity;
     
     @try {
-        NSDictionary *config = [AKConfig<NSDictionary *> configWithName:self.class.description];
+        NSDictionary *config = [[AKConfigManager manager] configWithName:self.class.description];
         if (config) {
             NSNumber *timeoutNumber = config[@"requestTimeout"];
             if (timeoutNumber) {

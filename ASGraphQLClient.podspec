@@ -2,19 +2,17 @@
 Pod::Spec.new do |s|
 
   s.name             = 'ASGraphQLClient'
-  s.version          = '0.2.0'
+  s.version          = '0.2.1'
   s.summary          = 'ASGraphQLClient - GraphQL Client'
 
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
 Description should be longer than summary.
 more longer
-much more longer
-longer...
-                       DESC
+much more longer...
+DESC
 
   s.homepage     = "https://github.com/Anobisoft/ASGraphQLClient"
-# s.screenshots  = "www.example.com/screenshots_1.gif"
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author             = { "Stanislav Pletnev" => "anobisoft@gmail.com" }
   s.social_media_url   = "https://twitter.com/Anobisoft"
@@ -36,9 +34,6 @@ longer...
 # s.preserve_paths = "FilesToSave", "MoreFilesToSave"
 
   s.framework  = "Foundation"
-# s.frameworks = "SomeFramework", "AnotherFramework"
-# s.library   = "iconv"
-# s.libraries = "iconv", "xml2"
   s.dependency 'AnobiKit', '~> 0.2.1'
 
   s.requires_arc = true
