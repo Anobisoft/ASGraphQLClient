@@ -68,7 +68,7 @@
 		D444B4AE0DC96771BFA86FF9 /* Pods-ASGraphQLClient_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASGraphQLClient_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-ASGraphQLClient_Example/Pods-ASGraphQLClient_Example.release.xcconfig"; sourceTree = "<group>"; };
 		D6DCF70DDD885358887892C0 /* Pods-ASGraphQLClient_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ASGraphQLClient_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ASGraphQLClient_Tests/Pods-ASGraphQLClient_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E39F22E1CC7E38091066249F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		FF6FB57BE3D9EE40D7FD2E6F /* ASGraphQLClient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ASGraphQLClient.podspec; path = ../ASGraphQLClient.podspec; sourceTree = "<group>"; };
+		FF6FB57BE3D9EE40D7FD2E6F /* ASGraphQLClient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ASGraphQLClient.podspec; path = ../ASGraphQLClient.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -12,62 +12,56 @@
 
 NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
 
+@interface ASGraphQLClient()
+@property (nonatomic) NSURLSessionConfiguration *sessionConfig;
+@property (nonatomic) NSURLSession *session;
+@property (nonatomic) ASGraphQLClientDataTaskQueue *taskQueue;
+@end
+
 @implementation ASGraphQLClient {
-    NSURLSessionConfiguration *sessionConfig;
-    NSURLSession *session;
-    ASGraphQLClientDataTaskQueue *taskQueue;
+
 }
 
-static id sharedInstance;
-+ (instancetype)shared {
-    return sharedInstance;
-}
-+ (instancetype)sharedWithURLString:(NSString *)URLString {
-    return [self sharedWithURL:[NSURL URLWithString:URLString]];
-}
-+ (instancetype)sharedWithURL:(NSURL *)URL {
++ (instancetype)clientWithURL:(NSURL *)URL {
     if (!URL) return nil;
-    return sharedInstance = [[self alloc] initWithURL:URL];
+    return [[self alloc] initWithURL:URL];
 }
 
 - (instancetype)initWithURL:(NSURL *)URL {
     if (self = [super init]) {
-        sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        
-        NSMutableDictionary *mutableHTTPAdditionalHeaders = sessionConfig.HTTPAdditionalHeaders.mutableCopy;
+        _APIURL = URL;
+        self.sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSMutableDictionary *mutableHTTPAdditionalHeaders = self.sessionConfig.HTTPAdditionalHeaders.mutableCopy;
         mutableHTTPAdditionalHeaders[@"Content-Type"] = @"application/x-www-form-urlencoded; charset=UTF-8";
         mutableHTTPAdditionalHeaders[@"Accept-Encoding"] = @"gzip, deflate";
-        sessionConfig.HTTPAdditionalHeaders = mutableHTTPAdditionalHeaders;
-        
-        session = [NSURLSession sessionWithConfiguration:sessionConfig];
-        
-        _APIURL = URL;
-        taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithAPIURL:_APIURL];
+        self.sessionConfig.HTTPAdditionalHeaders = mutableHTTPAdditionalHeaders;
+        self.session = [NSURLSession sessionWithConfiguration:self.sessionConfig];        
+        self.taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithURL:self.APIURL];
     }
     return self;
 }
 
 
 - (id<ASGraphQLClientUIDelegate>)UIDelegate {
-    return taskQueue.UIDelegate;
+    return self.taskQueue.UIDelegate;
 }
 
 - (void)setUIDelegate:(id<ASGraphQLClientUIDelegate>)UIDelegate {
-    taskQueue.UIDelegate = UIDelegate;
+    self.taskQueue.UIDelegate = UIDelegate;
 }
 
 - (NSTimeInterval)defaultTimeout {
-    return sessionConfig.timeoutIntervalForRequest;
+    return self.sessionConfig.timeoutIntervalForRequest;
 }
 
 - (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
-    sessionConfig.timeoutIntervalForRequest = self.defaultTimeout;
+    self.sessionConfig.timeoutIntervalForRequest = self.defaultTimeout;
 }
 
 - (void)setAuthToken:(NSString *)authToken {
-    NSMutableDictionary *headers = sessionConfig.HTTPAdditionalHeaders.mutableCopy;
+    NSMutableDictionary *headers = self.sessionConfig.HTTPAdditionalHeaders.mutableCopy;
     headers[@"Authorization"] = [NSString stringWithFormat:@"token %@", authToken];
-    sessionConfig.HTTPAdditionalHeaders = headers;
+    self.sessionConfig.HTTPAdditionalHeaders = headers;
 }
 
 #pragma mark -
@@ -87,7 +81,7 @@ static id sharedInstance;
     request.HTTPMethod = @"POST";
     request.HTTPBody = [query representationData];
     NSURLSessionDataTask *task = nil;
-    task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSHTTPURLResponse *httpResp = (NSHTTPURLResponse *)response;
         if (error) NSLog(@"[ERROR] dataTaskWithRequest completed with error: %@", error);
         if (httpResp.statusCode == 200) {
@@ -113,7 +107,7 @@ static id sharedInstance;
         }
     }];
     
-    [taskQueue enqueueTask:task];
+    [self.taskQueue enqueueTask:task];
     
     return task;
 }

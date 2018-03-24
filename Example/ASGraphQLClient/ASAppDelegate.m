@@ -16,8 +16,9 @@
     query.variables = @{
                         @"episode" : @"JEDI"
                         };
-    [ASGraphQLClient sharedWithURLString:@"https://api.github.com/graphql"];
-    [[ASGraphQLClient shared] query:query
+    NSURL *APIURL = [NSURL URLWithString:@"https://api.github.com/graphql"];
+    ASGraphQLClient *client = [ASGraphQLClient clientWithURL:APIURL];
+    [client query:query
                          fetchBlock:^(NSDictionary * _Nullable data, NSError * _Nullable error) {
         NSLog(@"data: %@", data);
     }];

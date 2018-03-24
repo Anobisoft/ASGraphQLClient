@@ -7,6 +7,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ASGraphQuery(Private)
+@interface ASGraphQuery(Protected)
 @property (readonly) NSData *representationData;
 @end

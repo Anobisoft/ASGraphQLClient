@@ -16,9 +16,7 @@ extern NSString * const ASGraphQLClientErrorDomain;
 
 @interface ASGraphQLClient : NSObject
 
-+ (instancetype)shared;
-+ (instancetype)sharedWithURL:(NSURL *)URL;
-+ (instancetype)sharedWithURLString:(NSString *)URLString;
++ (instancetype)clientWithURL:(NSURL *)URL;
 
 @property (readonly) NSURL *APIURL;
 @property (nonatomic) NSString *authToken;

@@ -11,7 +11,7 @@
 
 @interface ASGraphQLClientDataTaskQueue : NSObject <DisableNSInit>
 
-+ (instancetype)instantiateWithAPIURL:(NSURL *)APIURL;
++ (instancetype)instantiateWithURL:(NSURL *)URL;
 - (void)enqueueTask:(NSURLSessionDataTask *)task;
 @property (weak) id<ASGraphQLClientUIDelegate> UIDelegate;
 
