@@ -3,15 +3,18 @@
 //  ASGraphQLClient
 //
 //  Created by Stanislav Pletnev on 02.11.2017.
+//  Copyright © 2017 Anobisoft. All rights reserved.
 //
 
 #import "ASGraphQLClientDataTaskQueue.h"
 #import <AnobiKit/AKReachability.h>
 
 @interface ASGraphQLClientDataTaskQueue() <AKReachabilityDelegate>
+
 @property (nonatomic, readonly) AKReachability *serverReachability;
 @property (nonatomic, readonly) NSMutableArray<NSURLSessionDataTask *> *suspendedTasks;
 @property (nonatomic) NSURL *URL;
+
 @end
 
 @implementation ASGraphQLClientDataTaskQueue
@@ -25,7 +28,7 @@
 
 - (instancetype)initWithURL:(NSURL *)URL {
     if (self = [super init]) {
-        self.URL = URL;
+        _URL = URL;
     }
     return self;
 }
@@ -66,7 +69,9 @@
 #pragma mark - AKReachabilityDelegate
 
 - (void)reachability:(AKReachability *)reachability didChangeStatus:(AKReachabilityStatus)status {
-    if (!_suspendedTasks) return ;
+    if (!self.suspendedTasks.count) {
+        return;
+    }
     if (status) {
         for (NSURLSessionDataTask *task in self.suspendedTasks) {
             [task resume];

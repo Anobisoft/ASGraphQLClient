@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AnobiKit/AKTypes.h>
 #import <AnobiKit/AKObjectMapping.h>
 
-@interface ASGraphQuery : NSObject <DisableNSInit>
+@interface ASGraphQuery : NSObject
+
 + (instancetype)queryWithName:(NSString *)qname;
 + (instancetype)queryWithString:(NSString *)query;
+
 @property (strong) NSDictionary<NSString *, id> *variables;
 
 @end

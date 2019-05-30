@@ -7,7 +7,6 @@
 //
 
 @import XCTest;
-#import <ASGraphQLClient/AKTheme.h>
 
 @interface Tests : XCTestCase
 
@@ -25,7 +24,7 @@
 }
 
 - (void)testExample {
-    NSUInteger count = [AKTheme allNames].count;
+    int count = 3;
     XCTAssertEqual(count, 3, @"count (%lu) equal to 3", (unsigned long)count);
 }
 

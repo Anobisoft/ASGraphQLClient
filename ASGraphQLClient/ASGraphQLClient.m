@@ -10,17 +10,19 @@
 #import "ASGraphQueryProtected.h"
 #import "ASGraphQLClientDataTaskQueue.h"
 
-NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
+NSString * const ASGraphQLClientErrorDomain = @"com.anobisoft.graphQL.client";
+NSString * const OAuthHeaderKey = @"Authorization";
 
 @interface ASGraphQLClient()
+
 @property (nonatomic) NSURLSessionConfiguration *sessionConfig;
 @property (nonatomic) NSURLSession *session;
 @property (nonatomic) ASGraphQLClientDataTaskQueue *taskQueue;
+
 @end
 
-@implementation ASGraphQLClient {
 
-}
+@implementation ASGraphQLClient
 
 + (instancetype)clientWithURL:(NSURL *)URL {
     if (!URL) return nil;
@@ -30,17 +32,12 @@ NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
 - (instancetype)initWithURL:(NSURL *)URL {
     if (self = [super init]) {
         _APIURL = URL;
-        self.sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        NSMutableDictionary *mutableHTTPAdditionalHeaders = self.sessionConfig.HTTPAdditionalHeaders.mutableCopy;
-        mutableHTTPAdditionalHeaders[@"Content-Type"] = @"application/x-www-form-urlencoded; charset=UTF-8";
-        mutableHTTPAdditionalHeaders[@"Accept-Encoding"] = @"gzip, deflate";
-        self.sessionConfig.HTTPAdditionalHeaders = mutableHTTPAdditionalHeaders;
-        self.session = [NSURLSession sessionWithConfiguration:self.sessionConfig];        
-        self.taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithURL:self.APIURL];
+        _sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _session = [NSURLSession sessionWithConfiguration:_sessionConfig];
+        _taskQueue = [ASGraphQLClientDataTaskQueue instantiateWithURL:_APIURL];
     }
     return self;
 }
-
 
 - (id<ASGraphQLClientUIDelegate>)UIDelegate {
     return self.taskQueue.UIDelegate;
@@ -58,52 +55,45 @@ NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
     self.sessionConfig.timeoutIntervalForRequest = self.defaultTimeout;
 }
 
-- (void)setAuthToken:(NSString *)authToken {
-    NSMutableDictionary *headers = self.sessionConfig.HTTPAdditionalHeaders.mutableCopy;
-    headers[@"Authorization"] = [NSString stringWithFormat:@"token %@", authToken];
+- (void)setAuthHeaderValue:(NSString *)authValue {
+    NSMutableDictionary *headers = self.sessionConfig.HTTPAdditionalHeaders.mutableCopy ?: [NSMutableDictionary new];
+    headers[OAuthHeaderKey] = authValue;
     self.sessionConfig.HTTPAdditionalHeaders = headers;
+    self.session = [NSURLSession sessionWithConfiguration:_sessionConfig];
+}
+
+- (NSString *)authHeaderValue {
+    return self.sessionConfig.HTTPAdditionalHeaders[OAuthHeaderKey];
 }
 
 #pragma mark -
 #pragma mark - Request
 
 - (NSURLSessionDataTask *)query:(ASGraphQuery *)query
-                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock {
+                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError * _Nullable error))fetchBlock {
+    
     return [self query:query timeout:0 fetchBlock:fetchBlock];
 }
 
 - (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                         timeout:(NSTimeInterval)timeout
-                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock {
+                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError * _Nullable error))fetchBlock {
    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.APIURL];
-    if (timeout) request.timeoutInterval = timeout;
+    if (timeout) {
+        request.timeoutInterval = timeout;
+    }
     request.HTTPMethod = @"POST";
-    request.HTTPBody = [query representationData];
+    request.HTTPBody = self.APIType == ASGraphQLAPITypeQuery ? query.representationData : [query representationJSONData];
     NSURLSessionDataTask *task = nil;
     task = [self.session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSHTTPURLResponse *httpResp = (NSHTTPURLResponse *)response;
-        if (error) NSLog(@"[ERROR] dataTaskWithRequest completed with error: %@", error);
-        if (httpResp.statusCode == 200) {
-            NSError *deserializationError;
-            id JSONObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&deserializationError];
-            if (deserializationError) NSLog(@"[ERROR] NSJSONSerialization error: %@", deserializationError);
-            if (JSONObject) {
-                NSDictionary *data = JSONObject[@"data"];
-                NSDictionary *errorInfo = JSONObject[@"error"];
-                NSError *graphQLError = nil;
-                if (errorInfo) graphQLError = [NSError errorWithDomain:ASGraphQLClientErrorDomain code:0x0001 userInfo:@{NSLocalizedFailureReasonErrorKey: errorInfo}];
-                fetchBlock(data, graphQLError ?: deserializationError ?: error);
-            } else {
-                fetchBlock(nil, deserializationError ?: error);
-            }
+        if (error) {
+            NSLog(@"[ERROR] dataTaskWithRequest completed with error: %@", error);
+        }
+        if (response) {
+            [self handleResponse:(NSHTTPURLResponse *)response data:data withFetchBlock:fetchBlock];
         } else {
-            if (error) {
-                fetchBlock(nil, error);
-            } else {
-                NSError *unexpectedStatusError = [NSError errorWithDomain:ASGraphQLClientErrorDomain code:0x0002 userInfo:@{NSLocalizedFailureReasonErrorKey : [NSString stringWithFormat:@"Unexpected status code: %ld\n%@", (long)httpResp.statusCode, httpResp.allHeaderFields] } ];
-                fetchBlock(nil, unexpectedStatusError);
-            }
+            fetchBlock(nil, error);
         }
     }];
     
@@ -112,5 +102,45 @@ NSString * const ASGraphQLClientErrorDomain = @"ASGraphQLClient";
     return task;
 }
 
+- (void)handleResponse:(NSHTTPURLResponse *)response data:(NSData *)data withFetchBlock:(void (^)(NSDictionary * _Nullable data, NSError * _Nullable error))fetchBlock {
+    
+    id JSONObject = nil;
+    if ([response.MIMEType isEqualToString:@"application/json"]) {
+        NSError *deserializationError;
+        JSONObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&deserializationError];
+        if (deserializationError) {
+            NSLog(@"[ERROR] NSJSONSerialization error: %@", deserializationError);
+        }
+        NSDictionary *JSONData = JSONObject[@"data"];
+        NSDictionary *errorInfo = JSONObject[@"error"];
+        NSError *graphQLError = nil;
+        if (errorInfo) {
+            graphQLError = [NSError errorWithDomain:ASGraphQLClientErrorDomain code:0x0001 userInfo:@{ NSLocalizedFailureReasonErrorKey: errorInfo}];
+        }
+        
+        if (JSONData || graphQLError || deserializationError) {
+            fetchBlock(JSONData, graphQLError ?: deserializationError);
+            return;
+        } else if (response.statusCode == 200) {
+            NSError *error = [NSError errorWithDomain:ASGraphQLClientErrorDomain code:0x0983 userInfo:@{ NSLocalizedDescriptionKey : @"Empty response data" } ];
+            fetchBlock(nil, error);
+            return;
+        }
+    }
+    
+    if (response.statusCode != 200) {
+        NSString *description = [NSString stringWithFormat:@"Unexpected status code: %ld", (long)response.statusCode];
+        NSMutableDictionary *info = @{ @"HTTPHeaders" : response.allHeaderFields }.mutableCopy;
+        info[@"JSONObject"] = JSONObject;
+        info[@"Data"] = data;
+        if (data) {
+            info[@"Data"] = [NSString stringWithUTF8String:data.bytes];
+        }
+        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : description,
+                                    NSLocalizedFailureReasonErrorKey : info, };
+        NSError *unexpectedStatusError = [NSError errorWithDomain:ASGraphQLClientErrorDomain code:0x0002 userInfo:userInfo];
+        fetchBlock(JSONObject, unexpectedStatusError);
+    }
+}
 
 @end

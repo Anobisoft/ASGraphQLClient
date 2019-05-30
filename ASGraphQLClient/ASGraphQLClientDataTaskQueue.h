@@ -3,16 +3,20 @@
 //  ASGraphQLClient
 //
 //  Created by Stanislav Pletnev on 02.11.2017.
+//  Copyright © 2017 Anobisoft. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import <AnobiKit/AKTypes.h>
 #import <ASGraphQLClient/ASGraphQLClientUIDelegate.h>
 
-@interface ASGraphQLClientDataTaskQueue : NSObject <DisableNSInit>
+@interface ASGraphQLClientDataTaskQueue : NSObject
+
+@property (weak) id<ASGraphQLClientUIDelegate> UIDelegate;
 
 + (instancetype)instantiateWithURL:(NSURL *)URL;
 - (void)enqueueTask:(NSURLSessionDataTask *)task;
-@property (weak) id<ASGraphQLClientUIDelegate> UIDelegate;
+
+- (instancetype)init NS_UNAVAILABLE;
+
 
 @end

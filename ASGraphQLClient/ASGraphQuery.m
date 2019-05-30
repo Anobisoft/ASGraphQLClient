@@ -21,11 +21,14 @@
 #pragma mark -
 #pragma mark - Instantiation
 
-static NSMutableDictionary *instancesCache;
 
-+ (void)initialize {
-    [super initialize];
-    instancesCache = [NSMutableDictionary new];
++ (NSMutableDictionary *)instancesCache {
+    static NSMutableDictionary *_instancesCache = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instancesCache = [NSMutableDictionary new];
+    });
+    return _instancesCache;
 }
 
 + (instancetype)queryWithString:(NSString *)query {
@@ -34,14 +37,14 @@ static NSMutableDictionary *instancesCache;
 
 - (instancetype)initWithString:(NSString *)query {
     if (self = [super init]) {
-        query = query;
+        _query = query;
     }
     return self;
 }
 
 + (instancetype)queryWithName:(NSString *)qname {
     if (!qname.length) return nil;
-    id instance = instancesCache[qname];
+    id instance = self.instancesCache[qname];
     if (instance) return instance;
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:qname ofType:ASGraphQueryFileExt];
@@ -49,7 +52,7 @@ static NSMutableDictionary *instancesCache;
     BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDirectory];
     if (filePath && fileExists && !isDirectory) {
         instance = [[self alloc] initWithFilePath:(NSString *)filePath];
-        instancesCache[qname] = instance;
+        self.instancesCache[qname] = instance;
         return instance;
     } else {
         NSLog(@"[ERROR] filePath '%@' %@exists, is %@directory", filePath, fileExists ? @"" : @"not ", isDirectory ? @"" : @"not ");
@@ -123,8 +126,7 @@ static NSMutableDictionary *instancesCache;
 - (BOOL)isEqual:(ASGraphQuery *)object {
     if (![object.class isKindOfClass:self.class]) return false;
     if (object.hash != self.hash) return false;
-    return [self.representationData isEqualToData:object.representationData];
-    
+    return [self.representationData isEqualToData:object.representationData];    
 }
 
 @end
@@ -136,6 +138,19 @@ static NSMutableDictionary *instancesCache;
 
 - (NSData *)representationData {
     return [self.representationString dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (NSData *)representationJSONData {
+    NSError *error;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:self.keyedRepresentation options:0 error:&error];
+    if (error) {
+#ifdef DEBUG
+        @throw error;
+#else
+        NSLog(@"[ERROR] NSJSONSerialization error: %@", error);
+#endif
+    }
+    return data;
 }
 
 @end

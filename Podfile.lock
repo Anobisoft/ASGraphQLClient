@@ -1,0 +1,46 @@
+PODS:
+  - AnobiKit (0.14.1):
+    - AnobiKit/AKCoding (= 0.14.1)
+    - AnobiKit/AKCoreData (= 0.14.1)
+    - AnobiKit/AKFormatters (= 0.14.1)
+    - AnobiKit/AKFoundation (= 0.14.1)
+    - AnobiKit/AKList (= 0.14.1)
+    - AnobiKit/AKLocation (= 0.14.1)
+    - AnobiKit/AKReachability (= 0.14.1)
+    - AnobiKit/AKStrings (= 0.14.1)
+    - AnobiKit/UIKit (= 0.14.1)
+  - AnobiKit/AKCoding (0.14.1):
+    - AnobiKit/AKFoundation
+  - AnobiKit/AKCoreData (0.14.1)
+  - AnobiKit/AKFormatters (0.14.1)
+  - AnobiKit/AKFoundation (0.14.1)
+  - AnobiKit/AKList (0.14.1):
+    - AnobiKit/AKFoundation
+  - AnobiKit/AKLocation (0.14.1):
+    - AnobiKit/AKFoundation
+  - AnobiKit/AKReachability (0.14.1)
+  - AnobiKit/AKStrings (0.14.1):
+    - AnobiKit/AKFoundation
+  - AnobiKit/UIKit (0.14.1):
+    - AnobiKit/AKFoundation
+  - ASGraphQLClient (0.3.0):
+    - AnobiKit (~> 0.14.0)
+
+DEPENDENCIES:
+  - ASGraphQLClient (from `.`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AnobiKit
+
+EXTERNAL SOURCES:
+  ASGraphQLClient:
+    :path: "."
+
+SPEC CHECKSUMS:
+  AnobiKit: b2aa28b6b52189abc5790becdd42afe72ef98567
+  ASGraphQLClient: b52047e98fc4f0c6a72bfd19e690fe8e0d72f54b
+
+PODFILE CHECKSUM: e4264fc072954285e7610d15a369fcd5d2339acc
+
+COCOAPODS: 1.7.0

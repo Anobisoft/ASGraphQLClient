@@ -12,23 +12,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, ASGraphQLClientType) {
+    ASGraphQLAPITypeJSON,
+    ASGraphQLAPITypeQuery,
+};
+
 extern NSString * const ASGraphQLClientErrorDomain;
 
 @interface ASGraphQLClient : NSObject
 
+@property (nonatomic, readonly) NSURL *APIURL;
+@property (nonatomic, nullable) NSString *authHeaderValue;
+@property (nonatomic) ASGraphQLClientType APIType;
+
+@property (nonatomic) NSTimeInterval defaultTimeout;
+@property (nonatomic, nullable) id<ASGraphQLClientUIDelegate> UIDelegate;
+
 + (instancetype)clientWithURL:(NSURL *)URL;
 
-@property (readonly) NSURL *APIURL;
-@property (nonatomic) NSString *authToken;
-@property NSTimeInterval defaultTimeout;
-@property id<ASGraphQLClientUIDelegate> UIDelegate;
-
 - (NSURLSessionDataTask *)query:(ASGraphQuery *)query
-                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;
+                     fetchBlock:(void (^)(NSDictionary * _Nullable data, NSError * _Nullable error))fetchBlock;
 
 - (NSURLSessionDataTask *)query:(ASGraphQuery *)query
                         timeout:(NSTimeInterval)timeout
-                     fetchBlock:(void (^)(NSDictionary  * _Nullable data, NSError  * _Nullable error))fetchBlock;
+                     fetchBlock:(void (^)(NSDictionary * _Nullable data, NSError * _Nullable error))fetchBlock;
 
 
 @end
